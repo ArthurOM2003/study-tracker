@@ -1,19 +1,15 @@
+"use client"; // Adicionando a diretiva para Client Component
+
 import { useState } from "react";
-import { useRouter } from "next/router"; // Importando o router para redirecionamento
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signInWithPopup, 
-  GoogleAuthProvider 
-} from "firebase/auth";
-import { app } from "../firebaseConfig";
+import { useRouter } from "next/navigation"; // Correto para App Router
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { app } from "./firebaseConfig"; // Ajuste o caminho conforme sua estrutura
 
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export default function AuthPage({ setUser }) {
-  const router = useRouter(); // Instância do router
+export default function AuthPage() {
+  const router = useRouter(); // Correto para o App Router
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
@@ -29,8 +25,7 @@ export default function AuthPage({ setUser }) {
       } else {
         userCredential = await signInWithEmailAndPassword(auth, email, password);
       }
-      setUser(userCredential.user);
-      router.push("/paga"); // Redireciona para paga.jsx após login/registro
+      router.push("/"); // Redireciona para a página principal após login
     } catch (err) {
       setError(err.message);
     }
@@ -39,8 +34,7 @@ export default function AuthPage({ setUser }) {
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      setUser(result.user);
-      router.push("/paga"); // Redireciona para paga.jsx após login com Google
+      router.push("/"); // Redireciona para a página principal após login
     } catch (err) {
       setError(err.message);
     }
