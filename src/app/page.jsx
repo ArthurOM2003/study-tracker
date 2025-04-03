@@ -21,6 +21,35 @@ export default function StudyTrackingDashboard() {
   const [view, setView] = useState("home");
   
   useEffect(() => {
+    let inputSequence = "";
+    const targetWord = "angelica";
+  
+    const handleKeyPress = (event) => {
+      inputSequence += event.key.toLowerCase();
+      if (inputSequence.includes(targetWord)) {
+        toast("❤️ Te amo ❤️", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          style: { backgroundColor: "red", color: "white", fontWeight: "bold" },
+        });
+        inputSequence = ""; // Reset após a ativação
+      }
+  
+      if (inputSequence.length > targetWord.length) {
+        inputSequence = inputSequence.slice(-targetWord.length); // Mantém apenas os últimos caracteres digitados
+      }
+    };
+  
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsAuthenticated(true);
@@ -44,7 +73,8 @@ export default function StudyTrackingDashboard() {
     
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 space-y-6">
        <ToastContainer /> {/* Certifique-se de que ele está aqui */}
-       <div className="flex justify-between items-center p-4 bg-white shadow-lg rounded-lg w-full max-w-4xl">
+       <div className="flex justify-between items-center px-4 bg-white shadow-lg rounded-lg w-full max-w-4xl">
+       <img src="/logo.png" alt="Logo" className="w-64 h-36 object-contain" /> 
   <h2 className="text-lg font-bold text-gray-700">
     {isAuthenticated ? `Bem-vindo, ${username}!` : "Study Tracker"}
   </h2>
