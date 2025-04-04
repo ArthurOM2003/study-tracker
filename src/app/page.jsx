@@ -165,7 +165,7 @@ function DashboardContent({ username, setView, view }) {
 
   const totalQuestions = filteredData.reduce((sum, data) => sum + data.correct + data.incorrect, 0);
   const totalTimeSpent = filteredData.reduce((sum, data) => sum + data.timeSpent, 0);
-  const avgTimeSpent = filteredData.length ? (totalTimeSpent / filteredData.length).toFixed(2) : 0;
+  const avgTimePerQuestion = totalQuestions ? (totalTimeSpent / totalQuestions).toFixed(2) : 0;;
   const accuracy = totalQuestions ? ((filteredData.reduce((sum, data) => sum + data.correct, 0) / totalQuestions) * 100).toFixed(2) : 0;
 
   return (
@@ -227,10 +227,9 @@ function DashboardContent({ username, setView, view }) {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg text-center w-40 border border-gray-200">
-        <p className="text-md font-semibold text-gray-600">Avg Time Spent</p>
-        <p className="text-3xl font-bold text-gray-900 mt-2">{avgTimeSpent} min</p>
-      </div>
-
+        <p className="text-md font-semibold text-gray-600">Avg Time Per Question</p>
+        <p className="text-3xl font-bold text-gray-900 mt-2">{avgTimePerQuestion} min</p>
+    </div>
       <div className="bg-white p-6 rounded-lg shadow-lg text-center w-40 border border-gray-200">
         <p className="text-md font-semibold text-gray-600">Accuracy</p>
         <p className="text-3xl font-bold text-gray-900 mt-2">{accuracy}%</p>
