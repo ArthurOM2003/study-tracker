@@ -163,6 +163,8 @@ function DashboardContent({ username, setView, view }) {
     ? studyData.filter((data) => data.subject === selectedStatSubject)
     : [];
 
+    const sortedData = [...filteredData].sort((a, b) => new Date(a.date) - new Date(b.date));
+
   const totalQuestions = filteredData.reduce((sum, data) => sum + data.correct + data.incorrect, 0);
   const totalTimeSpent = filteredData.reduce((sum, data) => sum + data.timeSpent, 0);
   const avgTimePerQuestion = totalQuestions ? (totalTimeSpent / totalQuestions).toFixed(2) : 0;;
@@ -238,16 +240,15 @@ function DashboardContent({ username, setView, view }) {
 
     {/* Gráfico */}
     <ResponsiveContainer width="100%" height={300} className="bg-white p-4 rounded-lg shadow-md">
-      <BarChart data={filteredData}>
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="correct" fill="#82ca9d" />
-        <Bar dataKey="incorrect" fill="#ff4d4d" />
-      </BarChart>
-    </ResponsiveContainer>
-
+  <BarChart data={sortedData}>
+    <XAxis dataKey="date" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Bar dataKey="correct" fill="#82ca9d" />
+    <Bar dataKey="incorrect" fill="#ff4d4d" />
+  </BarChart>
+</ResponsiveContainer>
         {/* Lista de Registros e Botão de Exclusão */}
         <div className="mt-6 space-y-4">
       {filteredData.map((data) => (
