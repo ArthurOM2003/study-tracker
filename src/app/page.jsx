@@ -110,6 +110,22 @@ function DashboardContent({ username, setView, view }) {
   const [selectedSubject, setSelectedSubject] = useState("CARDIO");
   const [studyData, setStudyData] = useState([]);
   const [selectedStatSubject, setSelectedStatSubject] = useState(null);
+  const totalGlobalQuestions = studyData.reduce((sum, d) => sum + d.correct + d.incorrect, 0);
+const totalGlobalTimeSpent = studyData.reduce((sum, d) => sum + d.timeSpent, 0);
+const avgGlobalTimePerQuestion = totalGlobalQuestions ? (totalGlobalTimeSpent / totalGlobalQuestions).toFixed(2) : "0";
+const globalAccuracy = totalGlobalQuestions ? ((studyData.reduce((sum, d) => sum + d.correct, 0) / totalGlobalQuestions) * 100).toFixed(2) : "0";
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      const fetchAllStudyData = async () => {
+        const q = query(collection(db, "studyData"), where("userId", "==", auth.currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setStudyData(data);
+      };
+      fetchAllStudyData();
+    }
+  }, []);
 
   useEffect(() => {
     if (view === "stats" && auth.currentUser) {
@@ -175,6 +191,21 @@ function DashboardContent({ username, setView, view }) {
       {view === "home" ? (
         <div>
           <h1 className="text-2xl font-bold text-center">Study Tracking Dashboard</h1>
+          <h2 className="text-1xl font-bold text-center">General Statistics</h2>
+          <div className="flex justify-center items-center gap-6 mt-6">
+  <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
+    <p className="text-md font-semibold text-gray-600">Total Questões</p>
+    <p className="text-3xl font-bold text-gray-900 mt-2">{totalGlobalQuestions}</p>
+  </div>
+  <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
+    <p className="text-md font-semibold text-gray-600">Tempo Médio</p>
+    <p className="text-3xl font-bold text-gray-900 mt-2">{avgGlobalTimePerQuestion} min</p>
+  </div>
+  <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
+    <p className="text-md font-semibold text-gray-600">Precisão</p>
+    <p className="text-3xl font-bold text-gray-900 mt-2">{globalAccuracy}%</p>
+  </div>
+</div>
           <div className="grid grid-cols-2 gap-4 mt-6">
           <Card className="cursor-pointer bg-white shadow-md hover:shadow-lg transition transform hover:-translate-y-1 rounded-lg" onClick={() => setView("stats")}>
   <CardContent className="p-6 text-center">
@@ -201,8 +232,11 @@ function DashboardContent({ username, setView, view }) {
               <option key={subj} value={subj}>{subj}</option>
             ))}
           </select>
+          <p>Correct Answers</p>
           <Input type="number" placeholder="Correct Answers" value={correct} onChange={(e) => setCorrect(e.target.value)} className="mb-2" />
+          <p>Incorrect Answers</p>
           <Input type="number" placeholder="Incorrect Answers" value={incorrect} onChange={(e) => setIncorrect(e.target.value)} className="mb-2" />
+          <p>Time Spent (minutes)</p>
           <Input type="number" placeholder="Time Spent (minutes)" value={timeSpent} onChange={(e) => setTimeSpent(e.target.value)} className="mb-2" />
           <Button onClick={addStudyData} className="bg-blue-500 text-white">Add</Button>
         </div>
@@ -223,16 +257,16 @@ function DashboardContent({ username, setView, view }) {
   <div className="mt-6">
     {/* Indicadores de Desempenho */}
     <div className="flex justify-center items-center gap-6 mb-6">
-    <div className="bg-white p-6 rounded-lg shadow-lg text-center w-40 border border-gray-200">
+    <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
         <p className="text-md font-semibold text-gray-600">Total Questions</p>
         <p className="text-3xl font-bold text-gray-900 mt-2">{totalQuestions}</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center w-40 border border-gray-200">
+      <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
         <p className="text-md font-semibold text-gray-600">Avg Time Per Question</p>
         <p className="text-3xl font-bold text-gray-900 mt-2">{avgTimePerQuestion} min</p>
     </div>
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center w-40 border border-gray-200">
+      <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
         <p className="text-md font-semibold text-gray-600">Accuracy</p>
         <p className="text-3xl font-bold text-gray-900 mt-2">{accuracy}%</p>
       </div>
