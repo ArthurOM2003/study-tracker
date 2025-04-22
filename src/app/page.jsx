@@ -115,6 +115,26 @@ const totalGlobalTimeSpent = studyData.reduce((sum, d) => sum + d.timeSpent, 0);
 const avgGlobalTimePerQuestion = totalGlobalQuestions ? (totalGlobalTimeSpent / totalGlobalQuestions).toFixed(2) : "0";
 const globalAccuracy = totalGlobalQuestions ? ((studyData.reduce((sum, d) => sum + d.correct, 0) / totalGlobalQuestions) * 100).toFixed(2) : "0";
 
+function CustomTooltip({ active, payload, label }) {
+  if (active && payload && payload.length) {
+    const { correct, incorrect, timeSpent } = payload[0].payload;
+    const totalQuestions = correct + incorrect;
+    const timePerQuestion = totalQuestions ? (timeSpent / totalQuestions).toFixed(2) : 0;
+
+    return (
+      <div className="bg-white p-2 border border-gray-300 rounded shadow-md">
+        <p><strong>Data:</strong> {label}</p>
+        <p><strong>Corretas:</strong> {correct}</p>
+        <p><strong>Incorretas:</strong> {incorrect}</p>
+        <p><strong>Tempo Total:</strong> {timeSpent} min</p>
+        <p><strong>Tempo por Questão:</strong> {timePerQuestion} min</p>
+      </div>
+    );
+  }
+
+  return null;
+}
+
   useEffect(() => {
     if (auth.currentUser) {
       const fetchAllStudyData = async () => {
@@ -191,7 +211,7 @@ const globalAccuracy = totalGlobalQuestions ? ((studyData.reduce((sum, d) => sum
       {view === "home" ? (
         <div>
           <h1 className="text-2xl font-bold text-center">Study Tracking Dashboard</h1>
-          <h2 className="text-1xl font-bold text-center">General Statistics</h2>
+          <h2 className="text-1xl font-bold text-center h-20z">General Statistics</h2>
           <div className="flex justify-center items-center gap-6 mt-6">
   <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 h-36 border border-gray-200">
     <p className="text-md font-semibold text-gray-600">Total Questões</p>
@@ -277,7 +297,7 @@ const globalAccuracy = totalGlobalQuestions ? ((studyData.reduce((sum, d) => sum
   <BarChart data={sortedData}>
     <XAxis dataKey="date" />
     <YAxis />
-    <Tooltip />
+    <Tooltip content={<CustomTooltip />} />
     <Legend />
     <Bar dataKey="correct" fill="#82ca9d" />
     <Bar dataKey="incorrect" fill="#ff4d4d" />
