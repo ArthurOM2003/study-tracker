@@ -120,13 +120,14 @@ function CustomTooltip({ active, payload, label }) {
     const { correct, incorrect, timeSpent } = payload[0].payload;
     const totalQuestions = correct + incorrect;
     const timePerQuestion = totalQuestions ? (timeSpent / totalQuestions).toFixed(2) : 0;
+    const timehours = (timeSpent / 60).toFixed(1);
 
     return (
       <div className="bg-white p-2 border border-gray-300 rounded shadow-md">
         <p><strong>Data:</strong> {label}</p>
         <p><strong>Corretas:</strong> {correct}</p>
         <p><strong>Incorretas:</strong> {incorrect}</p>
-        <p><strong>Tempo Total:</strong> {timeSpent} min</p>
+        <p><strong>Tempo Total:</strong> {timeSpent} min / {timehours} h</p>
         <p><strong>Tempo por Questão:</strong> {timePerQuestion} min</p>
       </div>
     );
